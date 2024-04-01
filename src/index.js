@@ -1,4 +1,4 @@
-const dogs = data
+// const dogs = data
 // // Access Elements
 const header = document.querySelector(".header")
 const topMenu = document.querySelector(".dogs-list")
@@ -6,32 +6,39 @@ const addDogButton = document.querySelector(".dogs-list__button--add")
 const main = document.querySelector(".main")
 const dogCard = document.querySelector(".main__dog-section")
 
+
 //Add buttons to top menu
 function addTopMenuButtons() {
-	for (let i = 0; i < dogs.length; i++) {
+	for (let i = 0; i < data.length; i++) {
 		const dogButton = document.createElement("li")
 		dogButton.classList.add("dogs-list__button")
 		dogButton.classList.add("dog-button")
 
-		dogButton.innerText = dogs[i].name
+		dogButton.innerText = data[i].name
 		topMenu.append(dogButton)
 	}
 }
 
 addTopMenuButtons()
 
+function clearMain() {
+	if (main.firstChild) {
+		main.removeChild(main.firstChild)
+	}
+}
+
 //Create card's elements
 
 //
-function addDogName(dogs) {
+function addDogName(data) {
 	const dogName = document.createElement("h2")
-	dogName.innerText = dogs.name
+	dogName.innerText = data.name
 	return dogName
 }
 
-function addCardPic(dogs) {
+function addCardPic(data) {
 	const dogPic = document.createElement("img")
-	dogPic.setAttribute("src", dogs.image)
+	dogPic.setAttribute("src", data.image)
 	dogPic.classList.add("dog-pic")
 	return dogPic
 }
@@ -43,11 +50,11 @@ function addBioContainer() {
 	return bioDiv
 }
 
-function addBioTxt(dogs, bioContainer) {
+function addBioTxt(data, bioContainer) {
 	const bioTitle = document.createElement("h3")
 	const bioTxt = document.createElement("p")
 	bioTitle.innerText = "bio"
-	bioTxt.innerText = dogs.bio
+	bioTxt.innerText = data.bio
 	bioContainer.append(bioTitle, bioTxt)
 }
 
@@ -64,9 +71,9 @@ function addNaughtyOrGoodQuestion() {
 }
 
 // Answer
-function naughtyOrGood(dogs) {
+function naughtyOrGood(data) {
 	let naughty
-	if (dogs.isGoodDog) {
+	if (data.isGoodDog) {
 		naughty = "No!"
 	} else {
 		naughty = "Yes!"
@@ -83,9 +90,9 @@ const addNaughtyOrGoodAnswer = (dog) => {
 	return dogJudgementAnswer
 }
 
-function naughtyOrGoodBtn(dogs) {
+function naughtyOrGoodBtn(data) {
 	let naughtyBtnTxt
-	if (dogs.isGoodDog) {
+	if (data.isGoodDog) {
 		naughtyBtnTxt = "Bad Dog!"
 	} else {
 		naughtyBtnTxt = "Good Dog!"
@@ -165,13 +172,13 @@ function makeNameInput() {
 function makeImageInputLabel() {
 	const imageInputLabel = document.createElement("label")
 	imageInputLabel.setAttribute("for", "Image")
-	imageInputLabel.innerText = "Dog's picture"
+	imageInputLabel.innerText = "Add dogie's picture url"
 	return imageInputLabel
 }
 
 function makeImageInput() {
-	const imageInput = document.createElement("img")
-	imageInput.setAttribute("type", "url")
+	const imageInput = document.createElement("input")
+	imageInput.setAttribute("type", "text")
 	imageInput.setAttribute("id", "image")
 	imageInput.setAttribute("name", "image")
 	return imageInput
@@ -192,17 +199,18 @@ function makeBioInput() {
 	return bioInput
 }
 
-function makeFormSubmitBtn() {
-	const submitForm = document.createElement("input")
-	submitForm.setAttribute("id", "submit")
-	submitForm.setAttribute("type", "submit")
-	submitForm.setAttribute("name", "submit")
-	submitForm.setAttribute("value", "Let's add a dog!")
-	submitForm.classList.add("form__button")
-	return submitForm
+function makeSubmitBtn() {
+	const submitButton = document.createElement("input")
+	submitButton.setAttribute("id", "submit")
+	submitButton.setAttribute("type", "submit")
+	submitButton.setAttribute("name", "submit")
+	submitButton.setAttribute("value", "Let's add a dog!")
+	submitButton.classList.add("form__button")
+	return submitButton
 }
 
 function makeAddDogInterface() {
+	clearMain()
 	const section = makeAddDogFormSection()
 	main.append(section)
 	const form = makeAddDogForm()
@@ -221,35 +229,39 @@ function makeAddDogInterface() {
 	form.append(bioLabel)
 	const addBio = makeBioInput()
 	form.append(addBio)
-	const submitButton = makeFormSubmitBtn()
+	const submitButton = makeSubmitBtn()
 	form.append(submitButton)
+
+	submitButton.addEventListener("click", (event) => {
+		event.preventDefault()
+		const name = addName.value
+		const image = addImage.value
+		const bio = addBio.value
+
+		// Create doggie from input values
+		const newDog = {
+			name: name,
+			image: image,
+			bio: bio,
+		}
+		//add dogie at the start of the list
+		data.unshift(newDog)
+
+		const secondChild = topMenu.children[1]
+		const newDogListItem = document.createElement("li")
+		newDogListItem.classList.add("dogs-list__button")
+		newDogListItem.innerText = name
+		topMenu.insertBefore(newDogListItem, secondChild)
+	})
 }
 
-// function addNewDoggie() {
-// 	const newDoggieObj = {
-// 		id: null,
-// 		name: null,
-// 		bio: null,
-// 		isGoodDog: true,
-// 		image: null,
-// 	}
-// 	const doggieName = document.getElementById("name").value
-// 	const doggieImage = document.getElementById("image").value
-// 	const doggieBio = document.getElementById("bio").value
-// 	newDoggieObj.id = dogs.length + 1
-// 	newDoggieObj.name = doggieName
-// 	newDoggieObj.image = doggieImage
-// 	newDoggieObj.bio = doggieBio
-// 	dogs.unshift(newDoggieObj)
-
-// }
 
 // Handle top menu clicks and display cards/form
-function handleDogButtonClick(dogs) {
+function handleDogButtonClick(data) {
 	topMenu.addEventListener("click", (event) => {
 		event.preventDefault()
 		const clickedButton = event.target
-		dogCard.innerHTML = ""
+		// dogCard.innerHTML = ""
 		if (clickedButton.classList.contains("dog-button")) {
 			// Find the index of the clicked dog in the array
 			const index = Array.from(topMenu.querySelectorAll(".dog-button")).indexOf(
@@ -257,17 +269,16 @@ function handleDogButtonClick(dogs) {
 			)
 			// Clear existing content in dogCard
 			dogCard.innerHTML = ""
-			createDogCard(dogs[index])
-		} else {
-			clearMain()
+			createDogCard(data[index])
+		} else if (clickedButton.classList.contains("dogs-list__button--add")) {
 			makeAddDogInterface()
+			clearMain()
 		}
 	})
 }
 
-handleDogButtonClick(dogs)
+handleDogButtonClick(data)
 
-function clearMain() {
-	const oldCard = document.querySelector(".main__dog-section")
-	oldCard.remove()
-}
+
+
+
