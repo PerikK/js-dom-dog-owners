@@ -21,15 +21,7 @@ function addTopMenuButtons() {
 
 addTopMenuButtons()
 
-function clearMain() {
-	if (main.firstChild) {
-		main.removeChild(main.firstChild)
-	}
-}
-
 //Create card's elements
-
-//
 function addDogName(data) {
 	const dogName = document.createElement("h2")
 	dogName.innerText = data.name
@@ -124,6 +116,7 @@ function createDogCard(dog) {
 	dogCard.append(judgeDoggie)
 
 	judgeDoggie.addEventListener("click", (event) => {
+		
 		if (event.target.innerText === "Good Dog!") {
 			isNaughtyA.innerText = "No!"
 			event.target.innerText = "Bad Dog!"
@@ -132,6 +125,7 @@ function createDogCard(dog) {
 			event.target.innerText = "Good Dog!"
 		}
 	})
+	main.append(dogCard)
 }
 
 // Create add-dog form
@@ -209,8 +203,22 @@ function makeSubmitBtn() {
 	return submitButton
 }
 
+// function recreateDogCards(data) {
+// 	// Clear existing content in dogCard
+// 	dogCard.innerHTML = ""
+
+// 	// Re-add top menu buttons
+// 	addTopMenuButtons()
+
+// 	// Re-create cards for all dogs
+// 	for (const dog of data) {
+// 		createDogCard(dog)
+// 	}
+// }
+
+
 function makeAddDogInterface() {
-	clearMain()
+
 	const section = makeAddDogFormSection()
 	main.append(section)
 	const form = makeAddDogForm()
@@ -234,12 +242,14 @@ function makeAddDogInterface() {
 
 	submitButton.addEventListener("click", (event) => {
 		event.preventDefault()
+
 		const name = addName.value
 		const image = addImage.value
 		const bio = addBio.value
 
 		// Create doggie from input values
 		const newDog = {
+			
 			name: name,
 			image: image,
 			bio: bio,
@@ -250,8 +260,12 @@ function makeAddDogInterface() {
 		const secondChild = topMenu.children[1]
 		const newDogListItem = document.createElement("li")
 		newDogListItem.classList.add("dogs-list__button")
+		newDogListItem.classList.add("dog-button")
+
 		newDogListItem.innerText = name
 		topMenu.insertBefore(newDogListItem, secondChild)
+
+		main.innerHTML = ""
 	})
 }
 
@@ -261,21 +275,23 @@ function handleDogButtonClick(data) {
 	topMenu.addEventListener("click", (event) => {
 		event.preventDefault()
 		const clickedButton = event.target
-		// dogCard.innerHTML = ""
+		main.innerHTML = ""
 		if (clickedButton.classList.contains("dog-button")) {
 			// Find the index of the clicked dog in the array
 			const index = Array.from(topMenu.querySelectorAll(".dog-button")).indexOf(
 				clickedButton
-			)
-			// Clear existing content in dogCard
+				)
 			dogCard.innerHTML = ""
 			createDogCard(data[index])
 		} else if (clickedButton.classList.contains("dogs-list__button--add")) {
+			main.innerHTML = ''
 			makeAddDogInterface()
-			clearMain()
+			
 		}
 	})
 }
+
+
 
 handleDogButtonClick(data)
 
